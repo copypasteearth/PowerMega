@@ -1,0 +1,1 @@
+This is just a jetpack compose practice project in my usual practice project of powerball and megamillions
