@@ -74,7 +74,7 @@ fun AppMainScreen(preview: Boolean) {
             if(!preview){
                 NavHost(
                     navController = navController,
-                    startDestination = DrawerScreens.MyTickets.route
+                    startDestination = DrawerScreens.PastResults.route
                 ) {
                     composable(DrawerScreens.MyTickets.route) {
                         Home(
