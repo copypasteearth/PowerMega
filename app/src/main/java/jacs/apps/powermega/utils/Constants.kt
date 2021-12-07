@@ -1,6 +1,8 @@
 package jacs.apps.powermega.utils
 
 object Constants {
+    const val PowerURL = "https://data.ny.gov/resource/d6yy-54nr.json"
+    const val MegaURL = "https://data.ny.gov/resource/5xaw-6ayf.json"
     const val WEDNESDAY_ALARM = 100
     const val SATURDAY_ALARM = 101
     const val TUESDAY_ALARM = 102

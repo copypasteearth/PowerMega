@@ -14,7 +14,7 @@ import jacs.apps.powermega.data.MyTicket
 fun TicketCard(winningTicket: WinningTicket, myTickets: List<MyTicket>, isPowerball: Boolean){
  Column(){
      Text(winningTicket.date!!)
-     TicketView(myTicket = myTickets.get(0), winingTicket = winningTicket, isActualTicket = true, isPowerball = isPowerball, numTicket = 0)
+     TicketView(myTicket = MyTicket(), winingTicket = winningTicket, isActualTicket = true, isPowerball = isPowerball, numTicket = 0)
      var count = 1
      for(myTicket in myTickets){
          TicketView(
@@ -42,7 +42,7 @@ fun Preview() {
         val ticket2 = MyTicket()
         ticket2.ticket = "2 3 4 5 6 7"
         ticket2.multi = true
-        var ticks = listOf<MyTicket>(ticket1,ticket2)
+        var ticks = listOf<MyTicket>()
         val win = WinningTicket()
         win.winningNumber = "1 2 3 4 5 6"
         win.multiplier = "3"

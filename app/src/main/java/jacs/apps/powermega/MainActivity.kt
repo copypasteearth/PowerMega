@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.StackView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -28,6 +29,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import jacs.apps.powermega.Views.*
+import jacs.apps.powermega.models.PowerMegaViewModel
 import jacs.apps.powermega.ui.theme.PowerMegaTheme
 import kotlinx.coroutines.launch
 
@@ -35,16 +37,18 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val viewModel : PowerMegaViewModel by viewModels()
+
         setContent {
             PowerMegaTheme {
-                AppMainScreen(preview = false)
+                AppMainScreen(viewModel = viewModel, preview = false)
             }
         }
     }
 }
 
 @Composable
-fun AppMainScreen(preview: Boolean) {
+fun AppMainScreen(viewModel: PowerMegaViewModel?, preview: Boolean) {
     val navController = rememberNavController()
     Surface(color = MaterialTheme.colors.background) {
         val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -76,6 +80,7 @@ fun AppMainScreen(preview: Boolean) {
                     navController = navController,
                     startDestination = DrawerScreens.PastResults.route
                 ) {
+
                     composable(DrawerScreens.MyTickets.route) {
                         Home(
                             openDrawer = {
@@ -84,7 +89,8 @@ fun AppMainScreen(preview: Boolean) {
                         )
                     }
                     composable(DrawerScreens.PastResults.route) {
-                        Account(
+                        PastTicketResults(
+                            viewModel = viewModel!!,
                             openDrawer = {
                                 openDrawer()
                             }
@@ -110,6 +116,6 @@ fun AppMainScreen(preview: Boolean) {
 @Composable
 fun DefaultPreview() {
     PowerMegaTheme {
-        AppMainScreen(preview = true)
+        AppMainScreen(viewModel = null, preview = true)
     }
 }
