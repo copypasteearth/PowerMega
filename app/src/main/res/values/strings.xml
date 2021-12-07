@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">PowerMega</string>
+    <string name="lottery_tools">Lottery Tools</string>
+    <string name="my_tickets">My Tickets</string>
+    <string name="past_results">Past Results</string>
+    <string name="simulator">Simulator</string>
+    <string name="header_text">Powerball, Megamillions, and Simulation</string>
 </resources>

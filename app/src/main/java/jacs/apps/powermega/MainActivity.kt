@@ -7,13 +7,13 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key.Companion.Home
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -24,7 +24,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import jacs.apps.powermega.Views.*
 import jacs.apps.powermega.ui.theme.PowerMegaTheme
+import kotlinx.coroutines.launch
 
 
 class MainActivity : ComponentActivity() {
@@ -32,81 +37,79 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             PowerMegaTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(color = MaterialTheme.colors.background) {
-                    Greeting("Android")
-                }
+                AppMainScreen(preview = false)
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String) {
+fun AppMainScreen(preview: Boolean) {
+    val navController = rememberNavController()
+    Surface(color = MaterialTheme.colors.background) {
+        val drawerState = rememberDrawerState(DrawerValue.Closed)
+        val scope = rememberCoroutineScope()
+        val openDrawer = {
+            scope.launch {
+                drawerState.open()
+            }
+        }
+        ModalDrawer(
+            drawerState = drawerState,
+            gesturesEnabled = drawerState.isOpen,
+            drawerContent = {
+                Drawer(
+                    onDestinationClicked = { route ->
+                        scope.launch {
+                            drawerState.close()
+                        }
+                        navController.navigate(route) {
+                            //popUpTo = navController.graph.startDestination
+                            launchSingleTop = true
+                        }
+                    }
+                )
+            }
+        ) {
+            if(!preview){
+                NavHost(
+                    navController = navController,
+                    startDestination = DrawerScreens.MyTickets.route
+                ) {
+                    composable(DrawerScreens.MyTickets.route) {
+                        Home(
+                            openDrawer = {
+                                openDrawer()
+                            }
+                        )
+                    }
+                    composable(DrawerScreens.PastResults.route) {
+                        Account(
+                            openDrawer = {
+                                openDrawer()
+                            }
+                        )
+                    }
+                    composable(DrawerScreens.Simulator.route) {
+                        Help(
+                            openDrawer = {
+                                openDrawer()
+                            }
+                        )
+                    }
+                }
+            }else{
+                Text(text = "hello")
+            }
 
-    Row(modifier = Modifier.fillMaxWidth().background(color= Color.Black),verticalAlignment = Alignment.CenterVertically) {
-        Box(modifier = Modifier.weight(1f).size(75.dp,75.dp)){
-            Image(painter = painterResource(id = R.drawable.ball1),"ball 1",modifier = Modifier.fillMaxSize())
-            Text(
-                "1",
-                fontSize = 25.sp,
-                textAlign = TextAlign.Center,
-                style = TextStyle(textDecoration = TextDecoration.Underline),
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.fillMaxSize().paddingFromBaseline(top = 45.dp))
         }
-        Box(modifier = Modifier.weight(1f).size(75.dp,75.dp)){
-            Image(painter = painterResource(id = R.drawable.ball1),"ball 2",modifier = Modifier.fillMaxSize())
-            Text("2",
-                fontSize = 25.sp,textAlign = TextAlign.Center,
-                style = TextStyle(textDecoration = TextDecoration.Underline),
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.fillMaxSize().paddingFromBaseline(top = 45.dp))
-        }
-        Box(modifier = Modifier.weight(1f).size(75.dp,75.dp)){
-            Image(painter = painterResource(id = R.drawable.ball1),"ball 3",modifier = Modifier.fillMaxSize())
-            Text("3",
-                fontSize = 25.sp,textAlign = TextAlign.Center,
-                style = TextStyle(textDecoration = TextDecoration.Underline),
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.fillMaxSize().paddingFromBaseline(top = 45.dp))
-        }
-        Box(modifier = Modifier.weight(1f).size(75.dp,75.dp)){
-            Image(painter = painterResource(id = R.drawable.ball1),"ball 4",modifier = Modifier.fillMaxSize())
-            Text("4",
-                fontSize = 25.sp,textAlign = TextAlign.Center,
-                style = TextStyle(textDecoration = TextDecoration.Underline),
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.fillMaxSize().paddingFromBaseline(top = 45.dp))
-        }
-        Box(modifier = Modifier.weight(1f).size(75.dp,75.dp)){
-            Image(painter = painterResource(id = R.drawable.ball1),"ball 5",modifier = Modifier.fillMaxSize())
-            Text("5",
-                fontSize = 25.sp,textAlign = TextAlign.Center,
-                style = TextStyle(textDecoration = TextDecoration.Underline),
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.fillMaxSize().paddingFromBaseline(top = 45.dp))
-        }
-        Box(modifier = Modifier.weight(1f).size(75.dp,75.dp)){
-            Image(painter = painterResource(id = R.drawable.power1),"powerball",modifier = Modifier.fillMaxSize())
-            Text("6",
-                fontSize = 25.sp,textAlign = TextAlign.Center,
-                style = TextStyle(textDecoration = TextDecoration.Underline),
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.fillMaxSize().paddingFromBaseline(top = 45.dp))
-        }
-
-
-
-
     }
-    //Text(text = "Hello $name!")
 }
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     PowerMegaTheme {
-        Greeting("Android")
+        AppMainScreen(preview = true)
     }
 }
