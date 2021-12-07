@@ -20,20 +20,22 @@ class PowerMegaViewModel(application: Application) : AndroidViewModel(applicatio
     val powerballData: LiveData<PowerballData> = liveData(context = viewModelScope.coroutineContext + Dispatchers.IO) {
 
             val json = URL(Constants.PowerURL).readText()
-            Log.d("viewmodel",json)
+            Log.d("powerball",json)
             val gson = Gson()
             val powerballDataList = gson.fromJson(json, PowerballData::class.java)
             emit(powerballDataList)
 
 
     }
-    val megamillionsData: LiveData<MegamillionsData> = liveData {
+    val megamillionsData: LiveData<MegamillionsData> = liveData(context = viewModelScope.coroutineContext + Dispatchers.IO) {
         val json = URL(Constants.MegaURL).readText()
+        Log.d("mega",json)
         val gson = Gson()
         val megamillionsDataList = gson.fromJson(json, MegamillionsData::class.java)
         emit(megamillionsDataList)
     }
     val myPowerballTickets = SharedPrefHelper.getMyTickets(application,Constants.POWER_TICKETS)
     val myMegamillionsTickets = SharedPrefHelper.getMyTickets(application,Constants.MEGA_TICKETS)
+
 
 }

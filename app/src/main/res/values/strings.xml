@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">PowerMega</string>
+    <string name="powerball">Powerball</string>
+    <string name="megamillions">Megamillions</string>
     <string name="lottery_tools">Lottery Tools</string>
     <string name="my_tickets">My Tickets</string>
     <string name="past_results">Past Results</string>
