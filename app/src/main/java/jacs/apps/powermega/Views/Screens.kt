@@ -26,11 +26,14 @@ import jacs.apps.powermega.data.MyTicket
 import jacs.apps.powermega.ui.theme.PowerMegaTheme
 import java.util.*
 import kotlin.collections.HashSet
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+
 
 @Composable
 fun MyTickets(viewModel: PowerMegaViewModel,openDrawer: () -> Unit) {
-    val myMegamillionsTickets = viewModel.myMegamillionsTickets
-    val myPowerTickets = viewModel.myPowerballTickets
+    var myMegamillionsTickets = viewModel.myMegamillionsTickets
+    var myPowerTickets = viewModel.myPowerballTickets
     var selectedTabIndex by remember { mutableStateOf(0) }
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar(
@@ -53,8 +56,36 @@ fun MyTickets(viewModel: PowerMegaViewModel,openDrawer: () -> Unit) {
             }
         }
         when(selectedTabIndex){
-            0 -> TicketPicker(powerball = true, viewModel = viewModel)
-            1 -> TicketPicker(powerball = false, viewModel = viewModel)
+            0 -> Column(){
+                TicketPicker(powerball = true, viewModel = viewModel)
+                myPowerTickets?.forEach {
+                    TicketView(
+                        myTicket = it,
+                        winingTicket = WinningTicket(),
+                        isActualTicket = false,
+                        isPowerball = true,
+                        numTicket = 0,
+                        display = true,
+                        onClick = {viewModel.removeTicket(powerball = true, ticket = it)}
+                    )
+                }
+            }
+            1 -> Column(){
+                TicketPicker(powerball = false, viewModel = viewModel)
+                myMegamillionsTickets?.forEach {
+                    TicketView(
+                        myTicket = it,
+                        winingTicket = WinningTicket(),
+                        isActualTicket = false,
+                        isPowerball = false,
+                        numTicket = 0,
+                        display = true,
+                        onClick = {
+                            Log.d("removing","removing ticket")
+                            viewModel.removeTicket(powerball = false, ticket = it)}
+                    )
+                }
+            }
         }
     }
 }
@@ -62,8 +93,12 @@ fun MyTickets(viewModel: PowerMegaViewModel,openDrawer: () -> Unit) {
 fun TicketPicker(powerball: Boolean,viewModel: PowerMegaViewModel?){
     val color = if(powerball)  Color.RED else Color.YELLOW
     val checkedState = remember { mutableStateOf(false) }
-    var numbers = arrayOf(1,1,1,1,1)
-    var powNum = 1
+    var number1 = remember{ mutableStateOf(1)}
+    var number2 = remember{ mutableStateOf(1)}
+    var number3 = remember{ mutableStateOf(1)}
+    var number4 = remember{ mutableStateOf(1)}
+    var number5 = remember{ mutableStateOf(1)}
+    var powNum = remember{ mutableStateOf(1)}
     val showDialog = remember { mutableStateOf(false) }
     if(showDialog.value){
         ErrorDialog(onDismiss = {showDialog.value = false})
@@ -74,7 +109,9 @@ fun TicketPicker(powerball: Boolean,viewModel: PowerMegaViewModel?){
                modifier = Modifier.weight(0.16666F),
                factory = { context ->
                    NumberPicker(context).apply {
-                       setOnValueChangedListener { numberPicker, i, i2 ->  numbers[0] = i2}
+                       setOnValueChangedListener { numberPicker, i, i2 ->
+                           Log.d("numberstickets", "$i  $i2")
+                           number1.value = i2}
                        minValue = 1
                        maxValue = if(powerball) 69 else 70
                    }
@@ -84,7 +121,7 @@ fun TicketPicker(powerball: Boolean,viewModel: PowerMegaViewModel?){
                modifier = Modifier.weight(0.16666F),
                factory = { context ->
                    NumberPicker(context).apply {
-                       setOnValueChangedListener { numberPicker, i, i2 ->  numbers[1] = i2}
+                       setOnValueChangedListener { numberPicker, i, i2 ->  number2.value = i2}
                        minValue = 1
                        maxValue = if(powerball) 69 else 70
                    }
@@ -94,7 +131,7 @@ fun TicketPicker(powerball: Boolean,viewModel: PowerMegaViewModel?){
                modifier = Modifier.weight(0.16666F),
                factory = { context ->
                    NumberPicker(context).apply {
-                       setOnValueChangedListener { numberPicker, i, i2 ->  numbers[2] = i2}
+                       setOnValueChangedListener { numberPicker, i, i2 ->  number3.value = i2}
                        minValue = 1
                        maxValue = if(powerball) 69 else 70
                    }
@@ -104,7 +141,7 @@ fun TicketPicker(powerball: Boolean,viewModel: PowerMegaViewModel?){
                modifier = Modifier.weight(0.16666F),
                factory = { context ->
                    NumberPicker(context).apply {
-                       setOnValueChangedListener { numberPicker, i, i2 -> numbers[3] = i2 }
+                       setOnValueChangedListener { numberPicker, i, i2 -> number4.value = i2 }
                        minValue = 1
                        maxValue = if(powerball) 69 else 70
                    }
@@ -114,7 +151,7 @@ fun TicketPicker(powerball: Boolean,viewModel: PowerMegaViewModel?){
                modifier = Modifier.weight(0.16666F),
                factory = { context ->
                    NumberPicker(context).apply {
-                       setOnValueChangedListener { numberPicker, i, i2 ->  numbers[4] = i2}
+                       setOnValueChangedListener { numberPicker, i, i2 ->  number5.value = i2}
                        minValue = 1
                        maxValue = if(powerball) 69 else 70
                    }
@@ -124,7 +161,7 @@ fun TicketPicker(powerball: Boolean,viewModel: PowerMegaViewModel?){
                modifier = Modifier.weight(0.16666F),
                factory = { context ->
                    NumberPicker(context).apply {
-                       setOnValueChangedListener { numberPicker, i, i2 ->  powNum = i2}
+                       setOnValueChangedListener { numberPicker, i, i2 ->  powNum.value = i2}
                        minValue = 1
                        maxValue = if(powerball) 26 else 25
                        setBackgroundColor(color)
@@ -134,17 +171,20 @@ fun TicketPicker(powerball: Boolean,viewModel: PowerMegaViewModel?){
        }
         Row(horizontalArrangement = Arrangement.Center){
             Button(onClick = {
-                Arrays.sort(numbers)
-                val set: Set<Int> = HashSet(Arrays.asList(*numbers))
-                if (set.size == numbers.size) {
-                    val ticket = numbers[0].toString() + " " + numbers[1] + " " + numbers[2] +
-                            " " + numbers[3] + " " + numbers[4] + " " + powNum
+                val nums = arrayOf(number1.value,number2.value,number3.value,number4.value,number5.value)
+                Arrays.sort(nums)
+                Log.d("numberstickets",Arrays.toString(nums))
+                val set: Set<Int> = HashSet(Arrays.asList(*nums))
+                if (set.size == nums.size) {
+                    val ticket = nums[0].toString() + " " + nums[1] + " " + nums[2] +
+                            " " + nums[3] + " " + nums[4] + " " + powNum.value
 
                     var ticketMultiplier = checkedState.value
 
                     val ticket1 = MyTicket()
                     ticket1.ticket = ticket
                     ticket1.multi = ticketMultiplier
+                    viewModel!!.addTicket(powerball = powerball, ticket = ticket1)
 
                 } else {
                     showDialog.value = true

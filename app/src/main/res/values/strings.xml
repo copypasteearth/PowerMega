@@ -3,6 +3,7 @@
     <string name="powerball">Powerball</string>
     <string name="megamillions">Megamillions</string>
     <string name="addticket">Add Ticket</string>
+    <string name="remove">Remove</string>
     <string name="ok">OK</string>
     <string name="invalid_ticket">Invalid Ticket Input</string>
     <string name="error">Error</string>

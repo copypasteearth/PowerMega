@@ -2,6 +2,7 @@ package jacs.apps.powermega.Views
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -9,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -22,12 +24,16 @@ import jacs.apps.powermega.data.MyTicket
 import jacs.apps.powermega.data.WinningTicket
 
 @Composable
-fun TicketView(myTicket: MyTicket, winingTicket: WinningTicket, isActualTicket: Boolean, isPowerball: Boolean, numTicket: Int) {
+fun TicketView(myTicket: MyTicket, winingTicket: WinningTicket, isActualTicket: Boolean, isPowerball: Boolean, numTicket: Int,display: Boolean,onClick: () -> Unit) {
     Column(
     ){
         if(isActualTicket) Text("Winning Ticket",fontSize = 25.sp) else Text("Ticket " + numTicket,fontSize = 25.sp,)
-        Row(modifier = Modifier.fillMaxWidth().background(color= Color.Black),verticalAlignment = Alignment.CenterVertically) {
-            Box(modifier = Modifier.weight(1f).size(75.dp,75.dp)){
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .background(color = Color.Black),verticalAlignment = Alignment.CenterVertically) {
+            Box(modifier = Modifier
+                .weight(1f)
+                .size(75.dp, 75.dp)){
                 Image(painter = painterResource(id = if(myTicket.getNumber(0) == winingTicket.getNumber(0) && !isActualTicket) R.drawable.ball1star else R.drawable.ball1),"ball 1",modifier = Modifier.fillMaxSize())
                 Text(
                     if (isActualTicket) winingTicket.getNumber(0).toString() else myTicket.getNumber(0).toString(),
@@ -35,41 +41,61 @@ fun TicketView(myTicket: MyTicket, winingTicket: WinningTicket, isActualTicket: 
                     textAlign = TextAlign.Center,
                     style = TextStyle(textDecoration = TextDecoration.Underline),
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.fillMaxSize().paddingFromBaseline(top = 45.dp))
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .paddingFromBaseline(top = 45.dp))
             }
-            Box(modifier = Modifier.weight(1f).size(75.dp,75.dp)){
+            Box(modifier = Modifier
+                .weight(1f)
+                .size(75.dp, 75.dp)){
                 Image(painter = painterResource(id = if(myTicket.getNumber(1) == winingTicket.getNumber(1) && !isActualTicket) R.drawable.ball1star else R.drawable.ball1),"ball 2",modifier = Modifier.fillMaxSize())
                 Text(if (isActualTicket) winingTicket.getNumber(1).toString() else myTicket.getNumber(1).toString(),
                     fontSize = 25.sp,textAlign = TextAlign.Center,
                     style = TextStyle(textDecoration = TextDecoration.Underline),
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.fillMaxSize().paddingFromBaseline(top = 45.dp))
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .paddingFromBaseline(top = 45.dp))
             }
-            Box(modifier = Modifier.weight(1f).size(75.dp,75.dp)){
+            Box(modifier = Modifier
+                .weight(1f)
+                .size(75.dp, 75.dp)){
                 Image(painter = painterResource(id = if(myTicket.getNumber(2) == winingTicket.getNumber(2) && !isActualTicket) R.drawable.ball1star else R.drawable.ball1),"ball 3",modifier = Modifier.fillMaxSize())
                 Text(if (isActualTicket) winingTicket.getNumber(2).toString() else myTicket.getNumber(2).toString(),
                     fontSize = 25.sp,textAlign = TextAlign.Center,
                     style = TextStyle(textDecoration = TextDecoration.Underline),
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.fillMaxSize().paddingFromBaseline(top = 45.dp))
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .paddingFromBaseline(top = 45.dp))
             }
-            Box(modifier = Modifier.weight(1f).size(75.dp,75.dp)){
+            Box(modifier = Modifier
+                .weight(1f)
+                .size(75.dp, 75.dp)){
                 Image(painter = painterResource(id = if(myTicket.getNumber(3) == winingTicket.getNumber(3) && !isActualTicket) R.drawable.ball1star else R.drawable.ball1),"ball 4",modifier = Modifier.fillMaxSize())
                 Text(if (isActualTicket) winingTicket.getNumber(3).toString() else myTicket.getNumber(3).toString(),
                     fontSize = 25.sp,textAlign = TextAlign.Center,
                     style = TextStyle(textDecoration = TextDecoration.Underline),
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.fillMaxSize().paddingFromBaseline(top = 45.dp))
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .paddingFromBaseline(top = 45.dp))
             }
-            Box(modifier = Modifier.weight(1f).size(75.dp,75.dp)){
+            Box(modifier = Modifier
+                .weight(1f)
+                .size(75.dp, 75.dp)){
                 Image(painter = painterResource(id = if(myTicket.getNumber(4) == winingTicket.getNumber(4) && !isActualTicket) R.drawable.ball1star else R.drawable.ball1),"ball 5",modifier = Modifier.fillMaxSize())
                 Text(if (isActualTicket) winingTicket.getNumber(4).toString() else myTicket.getNumber(4).toString(),
                     fontSize = 25.sp,textAlign = TextAlign.Center,
                     style = TextStyle(textDecoration = TextDecoration.Underline),
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.fillMaxSize().paddingFromBaseline(top = 45.dp))
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .paddingFromBaseline(top = 45.dp))
             }
-            Box(modifier = Modifier.weight(1f).size(75.dp,75.dp)){
+            Box(modifier = Modifier
+                .weight(1f)
+                .size(75.dp, 75.dp)){
                 var id = R.drawable.power1
                 if(myTicket.getNumber(5) == winingTicket.getNumber(5) && !isActualTicket){
                     if(isPowerball){
@@ -89,17 +115,36 @@ fun TicketView(myTicket: MyTicket, winingTicket: WinningTicket, isActualTicket: 
                     fontSize = 25.sp,textAlign = TextAlign.Center,
                     style = TextStyle(textDecoration = TextDecoration.Underline),
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.fillMaxSize().paddingFromBaseline(top = 45.dp))
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .paddingFromBaseline(top = 45.dp))
             }
             if(!isActualTicket){
-                Box(modifier = Modifier.weight(2f).size(75.dp,75.dp)){
+                Box(modifier = Modifier
+                    .weight(2f)
+                    .size(75.dp, 75.dp)){
+                    if(display){
+                        Text(
+                            stringResource(id = R.string.remove),
 
-                    Text(winingTicket.calculateWin(myTicket.ticket!!, true),
-                        color = Color.White,
-                        fontSize = 20.sp,textAlign = TextAlign.Center,
-                        style = TextStyle(textDecoration = TextDecoration.Underline),
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.fillMaxSize().paddingFromBaseline(top = 12.dp))
+                            color = Color.White,
+                            fontSize = 20.sp,textAlign = TextAlign.Center,
+                            style = TextStyle(textDecoration = TextDecoration.Underline),
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .paddingFromBaseline(top = 12.dp).clickable { onClick() })
+                    }else{
+                        Text(winingTicket.calculateWin(myTicket.ticket!!, myTicket.multi),
+                            color = Color.White,
+                            fontSize = 20.sp,textAlign = TextAlign.Center,
+                            style = TextStyle(textDecoration = TextDecoration.Underline),
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .paddingFromBaseline(top = 12.dp))
+                    }
+
                 }
             }
 
@@ -121,6 +166,6 @@ fun DefaultPreview() {
         var winningTicket = WinningTicket()
         winningTicket.winningNumber = "1 2 12 4 5 6"
         winningTicket.multiplier = "2"
-        TicketView(myTicket = myTicket, winingTicket = winningTicket,isActualTicket = true,isPowerball = true, numTicket = 1)
+        TicketView(myTicket = myTicket, winingTicket = winningTicket,isActualTicket = false,isPowerball = true, numTicket = 1,display = true, onClick = { } )
     }
 }

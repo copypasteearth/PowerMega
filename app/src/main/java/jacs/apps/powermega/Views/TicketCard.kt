@@ -14,7 +14,7 @@ import jacs.apps.powermega.data.MyTicket
 fun TicketCard(winningTicket: WinningTicket, myTickets: List<MyTicket>, isPowerball: Boolean){
  Column(){
      Text(winningTicket.date!!)
-     TicketView(myTicket = MyTicket(), winingTicket = winningTicket, isActualTicket = true, isPowerball = isPowerball, numTicket = 0)
+     TicketView(myTicket = MyTicket(), winingTicket = winningTicket, isActualTicket = true, isPowerball = isPowerball, numTicket = 0,display = false, onClick = {})
      var count = 1
      for(myTicket in myTickets){
          TicketView(
@@ -22,7 +22,9 @@ fun TicketCard(winningTicket: WinningTicket, myTickets: List<MyTicket>, isPowerb
              winingTicket = winningTicket,
              isActualTicket = false,
              isPowerball = isPowerball,
-             numTicket = count
+             numTicket = count,
+             display = false,
+             onClick = {}
          )
          count++
      }
