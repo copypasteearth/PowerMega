@@ -82,7 +82,8 @@ fun AppMainScreen(viewModel: PowerMegaViewModel?, preview: Boolean) {
                 ) {
 
                     composable(DrawerScreens.MyTickets.route) {
-                        Home(
+                        MyTickets(
+                            viewModel = viewModel!!,
                             openDrawer = {
                                 openDrawer()
                             }
