@@ -4,6 +4,15 @@
     <string name="megamillions">Megamillions</string>
     <string name="addticket">Add Ticket</string>
     <string name="remove">Remove</string>
+    <string name="totalplays">Total Plays</string>
+    <string name="years">Years</string>
+    <string name="weeks">Weeks</string>
+    <string name="hits">Hits</string>
+    <string name="average">Average</string>
+    <string name="minimum">Minimum</string>
+    <string name="reset">Reset</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
     <string name="ok">OK</string>
     <string name="invalid_ticket">Invalid Ticket Input</string>
     <string name="error">Error</string>

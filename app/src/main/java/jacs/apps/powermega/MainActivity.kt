@@ -98,10 +98,12 @@ fun AppMainScreen(viewModel: PowerMegaViewModel?, preview: Boolean) {
                         )
                     }
                     composable(DrawerScreens.Simulator.route) {
-                        Help(
+                        SimulatorScreen(
+                            viewModel = viewModel!!,
                             openDrawer = {
                                 openDrawer()
                             }
+
                         )
                     }
                 }

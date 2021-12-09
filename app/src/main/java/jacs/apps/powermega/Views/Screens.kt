@@ -13,6 +13,9 @@ import androidx.compose.ui.Modifier
 import jacs.apps.powermega.data.WinningTicket
 import jacs.apps.powermega.models.PowerMegaViewModel
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color.Companion.White
@@ -35,6 +38,7 @@ fun MyTickets(viewModel: PowerMegaViewModel,openDrawer: () -> Unit) {
     var myMegamillionsTickets = viewModel.myMegamillionsTickets
     var myPowerTickets = viewModel.myPowerballTickets
     var selectedTabIndex by remember { mutableStateOf(0) }
+    val scrollState = rememberScrollState()
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar(
             title = "Home",
@@ -56,7 +60,7 @@ fun MyTickets(viewModel: PowerMegaViewModel,openDrawer: () -> Unit) {
             }
         }
         when(selectedTabIndex){
-            0 -> Column(){
+            0 -> Column(modifier = Modifier.verticalScroll(scrollState)){
                 TicketPicker(powerball = true, viewModel = viewModel)
                 myPowerTickets?.forEach {
                     TicketView(
@@ -70,7 +74,7 @@ fun MyTickets(viewModel: PowerMegaViewModel,openDrawer: () -> Unit) {
                     )
                 }
             }
-            1 -> Column(){
+            1 -> Column(modifier = Modifier.verticalScroll(scrollState)){
                 TicketPicker(powerball = false, viewModel = viewModel)
                 myMegamillionsTickets?.forEach {
                     TicketView(
@@ -99,6 +103,7 @@ fun TicketPicker(powerball: Boolean,viewModel: PowerMegaViewModel?){
     var number4 = remember{ mutableStateOf(1)}
     var number5 = remember{ mutableStateOf(1)}
     var powNum = remember{ mutableStateOf(1)}
+
     val showDialog = remember { mutableStateOf(false) }
     if(showDialog.value){
         ErrorDialog(onDismiss = {showDialog.value = false})
@@ -279,18 +284,80 @@ fun PastTicketResults(viewModel: PowerMegaViewModel,openDrawer: () -> Unit) {
 }
 
 @Composable
-fun Help(openDrawer: () -> Unit) {
+fun SimulatorScreen(viewModel: PowerMegaViewModel?,openDrawer: () -> Unit) {
+    var selectedTabIndex by remember { mutableStateOf(0) }
+    var powerballTickets = viewModel!!.myPowerballTickets
+    var megamillionsTickets = viewModel.myMegamillionsTickets
+    var megaSim = viewModel.megaSimData
+    var powerSim = viewModel.powerSimData
+
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar(
-            title = "Help",
+            title = stringResource(id = R.string.past_results),
             buttonIcon = Icons.Filled.Menu,
             onButtonClicked = { openDrawer() }
         )
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(text = "Help.", style = MaterialTheme.typography.h4)
+        TabRow(
+            selectedTabIndex = selectedTabIndex,
+            modifier = Modifier.fillMaxWidth(), // Don't specify the TabRow's height!
+            backgroundColor = MaterialTheme.colors.primary
+        ) {
+            listOf(
+                stringResource(id = R.string.powerball),
+                stringResource(id = R.string.megamillions)
+            ).forEachIndexed { i, text ->
+                Tab(
+                    selected = selectedTabIndex == i,
+                    onClick = { selectedTabIndex = i },
+                    modifier = Modifier.height(50.dp), // Specify the Tab's height instead
+                    text = { Text(text) }
+                )
+            }
         }
+
+        when(selectedTabIndex){
+            0 -> Column(modifier = Modifier.fillMaxSize()){
+                Row(modifier = Modifier.fillMaxWidth()){
+                    Button(onClick = { /*TODO*/ },modifier = Modifier.weight(0.5f)) {
+                        Text(stringResource(id = R.string.reset))
+                    }
+                    Button(onClick = { /*TODO*/ },modifier = Modifier.weight(0.5f)) {
+                        Text(stringResource(id = R.string.start))
+                    }
+                }
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally){
+                    itemsIndexed(powerballTickets) { index, myTicket ->
+                        var simData = powerSim.get(index)
+                        SimulatorCard(powerball = true, myTicket = myTicket, simulatorData = simData)
+                    }
+                }
+
+
+            }
+            1 -> Column(modifier = Modifier.fillMaxSize()){
+                Row(modifier = Modifier.fillMaxWidth()){
+                    Button(onClick = { /*TODO*/ }, modifier = Modifier.weight(0.5f)) {
+                        Text(stringResource(id = R.string.reset))
+                    }
+                    Button(onClick = { /*TODO*/ },modifier = Modifier.weight(0.5f)) {
+                        Text(stringResource(id = R.string.start))
+                    }
+                }
+
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally){
+                    itemsIndexed(megamillionsTickets) { index, myTicket ->
+                        var simData = megaSim.get(index)
+                        SimulatorCard(powerball = false, myTicket = myTicket, simulatorData = simData)
+                    }
+                }
+            }
+        }
+
     }
 }

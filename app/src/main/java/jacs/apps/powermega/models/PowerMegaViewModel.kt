@@ -18,6 +18,7 @@ import java.net.URL
 import androidx.compose.runtime.getValue
 
 import androidx.compose.runtime.livedata.observeAsState
+import jacs.apps.powermega.SimulatorData
 
 class PowerMegaViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -50,29 +51,40 @@ class PowerMegaViewModel(application: Application) : AndroidViewModel(applicatio
         emit(list)
     } as MutableLiveData<ArrayList<MyTicket>>*/
     var myMegamillionsTickets = SharedPrefHelper.getMyTickets(getApplication(),Constants.MEGA_TICKETS).toList().toMutableStateList()
-
+    var megaSimData = SharedPrefHelper.getSimData(getApplication(),Constants.MEGA_SIM).toList().toMutableStateList()
+    var powerSimData = SharedPrefHelper.getSimData(getApplication(),Constants.POWER_SIM).toList().toMutableStateList()
     fun addTicket(powerball: Boolean, ticket: MyTicket){
         if(powerball){
             myPowerballTickets.add(ticket)
+            powerSimData.add(SimulatorData())
             SharedPrefHelper.setMyTickets(getApplication(),myPowerballTickets,Constants.POWER_TICKETS)
+            SharedPrefHelper.setSimData(getApplication(),powerSimData,Constants.POWER_SIM)
             //myPowerballTickets.value = myPowerballTickets.value
 
         }else{
             myMegamillionsTickets.add(ticket)
+            megaSimData.add(SimulatorData())
             SharedPrefHelper.setMyTickets(getApplication(),myMegamillionsTickets,Constants.MEGA_TICKETS)
+            SharedPrefHelper.setSimData(getApplication(),megaSimData,Constants.MEGA_SIM)
             //myMegamillionsTickets.value = myMegamillionsTickets.value
 
         }
     }
     fun removeTicket(powerball: Boolean,ticket: MyTicket){
         if(powerball){
+            val index = myPowerballTickets.indexOf(ticket)
             myPowerballTickets.remove(ticket)
+            powerSimData.removeAt(index)
             SharedPrefHelper.setMyTickets(getApplication(),myPowerballTickets,Constants.POWER_TICKETS)
+            SharedPrefHelper.setSimData(getApplication(),powerSimData,Constants.POWER_SIM)
             //myPowerballTickets.value = myPowerballTickets.value
 
         }else{
+            val index = myMegamillionsTickets.indexOf(ticket)
             myMegamillionsTickets.remove(ticket)
+            megaSimData.removeAt(index)
             SharedPrefHelper.setMyTickets(getApplication(),myMegamillionsTickets,Constants.MEGA_TICKETS)
+            SharedPrefHelper.setSimData(getApplication(),megaSimData,Constants.MEGA_SIM)
             //myMegamillionsTickets.value = myMegamillionsTickets.value
 
         }
