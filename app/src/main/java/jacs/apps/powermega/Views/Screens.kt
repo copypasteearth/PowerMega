@@ -31,6 +31,9 @@ import java.util.*
 import kotlin.collections.HashSet
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import jacs.apps.powermega.models.ServicesViewModel
+import jacs.apps.powermega.services.MegaMillionsSimulatorService
+import jacs.apps.powermega.services.PowerballSimulatorService
 
 
 @Composable
@@ -284,12 +287,13 @@ fun PastTicketResults(viewModel: PowerMegaViewModel,openDrawer: () -> Unit) {
 }
 
 @Composable
-fun SimulatorScreen(viewModel: PowerMegaViewModel?,openDrawer: () -> Unit) {
+fun SimulatorScreen(viewModel: PowerMegaViewModel?,serviceModel: ServicesViewModel?,openDrawer: () -> Unit) {
     var selectedTabIndex by remember { mutableStateOf(0) }
     var powerballTickets = viewModel!!.myPowerballTickets
     var megamillionsTickets = viewModel.myMegamillionsTickets
-    var megaSim = viewModel.megaSimData
-    var powerSim = viewModel.powerSimData
+    var megaSim = serviceModel!!.megaSim
+    var powerSim = serviceModel.powerSim
+
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar(
@@ -318,11 +322,14 @@ fun SimulatorScreen(viewModel: PowerMegaViewModel?,openDrawer: () -> Unit) {
         when(selectedTabIndex){
             0 -> Column(modifier = Modifier.fillMaxSize()){
                 Row(modifier = Modifier.fillMaxWidth()){
-                    Button(onClick = { /*TODO*/ },modifier = Modifier.weight(0.5f)) {
+                    Button(onClick = { serviceModel.resetPower() },modifier = Modifier.weight(0.5f)) {
                         Text(stringResource(id = R.string.reset))
                     }
-                    Button(onClick = { /*TODO*/ },modifier = Modifier.weight(0.5f)) {
-                        Text(stringResource(id = R.string.start))
+                    Button(onClick = serviceModel.powerClick,modifier = Modifier.weight(0.5f)) {
+                        if(!PowerballSimulatorService.running)
+                            Text(stringResource(id = R.string.start))
+                        else
+                            Text(stringResource(id = R.string.stop))
                     }
                 }
                 LazyColumn(
@@ -339,11 +346,14 @@ fun SimulatorScreen(viewModel: PowerMegaViewModel?,openDrawer: () -> Unit) {
             }
             1 -> Column(modifier = Modifier.fillMaxSize()){
                 Row(modifier = Modifier.fillMaxWidth()){
-                    Button(onClick = { /*TODO*/ }, modifier = Modifier.weight(0.5f)) {
+                    Button(onClick = { serviceModel.resetMega() }, modifier = Modifier.weight(0.5f)) {
                         Text(stringResource(id = R.string.reset))
                     }
-                    Button(onClick = { /*TODO*/ },modifier = Modifier.weight(0.5f)) {
-                        Text(stringResource(id = R.string.start))
+                    Button(onClick = serviceModel.megaClick ,modifier = Modifier.weight(0.5f)) {
+                        if(!MegaMillionsSimulatorService.running)
+                            Text(stringResource(id = R.string.start))
+                        else
+                            Text(stringResource(id = R.string.stop))
                     }
                 }
 

@@ -1,6 +1,10 @@
 package jacs.apps.powermega
 
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.StackView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -30,25 +34,91 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import jacs.apps.powermega.Views.*
 import jacs.apps.powermega.models.PowerMegaViewModel
+import jacs.apps.powermega.models.ServicesViewModel
+import jacs.apps.powermega.services.MegaMillionsSimulatorService
+import jacs.apps.powermega.services.PowerballSimulatorService
 import jacs.apps.powermega.ui.theme.PowerMegaTheme
 import kotlinx.coroutines.launch
 
 
 class MainActivity : ComponentActivity() {
+    lateinit var serviceModelcop: ServicesViewModel
+    override fun onDestroy() {
+        super.onDestroy()
+        if(serviceModelcop.binding){
+            this.unbindService(serviceModelcop.powerPlayServiceConnection)
+        }
+        if(serviceModelcop.mbinding){
+            this.unbindService(serviceModelcop.megaPlayServiceConnection)
+        }
+
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val viewModel : PowerMegaViewModel by viewModels()
+        val serviceModel : ServicesViewModel by viewModels()
+        serviceModelcop = serviceModel
+        if (PowerballSimulatorService.running) {
+            val intent = Intent(this, PowerballSimulatorService::class.java)
+            this.bindService(intent, serviceModel.powerPlayServiceConnection, Context.BIND_AUTO_CREATE)
+            serviceModel.binding = true
+        }
+        if (MegaMillionsSimulatorService.running) {
+            val intent = Intent(this, MegaMillionsSimulatorService::class.java)
+            this.bindService(intent, serviceModel.megaPlayServiceConnection, Context.BIND_AUTO_CREATE)
+            serviceModel.mbinding = true
+        }
+        serviceModel.powerClick = {
+            if (PowerballSimulatorService.running) {
+                Log.d("service","Service should be stopping")
+                val intent = Intent(this, PowerballSimulatorService::class.java)
+                this.unbindService(serviceModel.powerPlayServiceConnection)
+                serviceModel.binding = false
+                this.stopService(intent)
 
+            } else {
+                Log.d("service","Service should be starting")
+                val intent = Intent(this, PowerballSimulatorService::class.java)
+                if (Build.VERSION.SDK_INT > 25) {
+                    this.startForegroundService(intent)
+                } else {
+                    this.startService(intent)
+                }
+                this.bindService(intent, serviceModel.powerPlayServiceConnection, Context.BIND_AUTO_CREATE)
+                serviceModel.binding = true
+
+            }
+        }
+        serviceModel.megaClick = {
+            Log.d("service","Service should be starting")
+            if (MegaMillionsSimulatorService.running) {
+                val intent = Intent(this, MegaMillionsSimulatorService::class.java)
+                this.unbindService(serviceModel.megaPlayServiceConnection)
+                serviceModel.mbinding = false
+                this.stopService(intent)
+
+            } else {
+                val intent = Intent(this, MegaMillionsSimulatorService::class.java)
+                if (Build.VERSION.SDK_INT > 25) {
+                    this.startForegroundService(intent)
+                } else {
+                    this.startService(intent)
+                }
+                this.bindService(intent, serviceModel.megaPlayServiceConnection, Context.BIND_AUTO_CREATE)
+                serviceModel.mbinding = true
+
+            }
+        }
         setContent {
             PowerMegaTheme {
-                AppMainScreen(viewModel = viewModel, preview = false)
+                AppMainScreen(viewModel = viewModel, serviceModel = serviceModel, preview = false)
             }
         }
     }
 }
 
 @Composable
-fun AppMainScreen(viewModel: PowerMegaViewModel?, preview: Boolean) {
+fun AppMainScreen(viewModel: PowerMegaViewModel?,serviceModel: ServicesViewModel?, preview: Boolean) {
     val navController = rememberNavController()
     Surface(color = MaterialTheme.colors.background) {
         val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -100,6 +170,7 @@ fun AppMainScreen(viewModel: PowerMegaViewModel?, preview: Boolean) {
                     composable(DrawerScreens.Simulator.route) {
                         SimulatorScreen(
                             viewModel = viewModel!!,
+                            serviceModel = serviceModel!!,
                             openDrawer = {
                                 openDrawer()
                             }
@@ -119,6 +190,6 @@ fun AppMainScreen(viewModel: PowerMegaViewModel?, preview: Boolean) {
 @Composable
 fun DefaultPreview() {
     PowerMegaTheme {
-        AppMainScreen(viewModel = null, preview = true)
+        AppMainScreen(viewModel = null, serviceModel = null, preview = true)
     }
 }

@@ -14,6 +14,7 @@
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="ok">OK</string>
+    <string name="simrunning">Simulation is running...</string>
     <string name="invalid_ticket">Invalid Ticket Input</string>
     <string name="error">Error</string>
     <string name="multiplier">Multiplier</string>
